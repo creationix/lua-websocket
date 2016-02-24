@@ -148,6 +148,54 @@ return function (socket, options)
     end
     return socket:write(chunks, callback)
   end
+  ssocket.socket = socket
+  local names = {
+    "is_active",
+    "is_closing",
+    "close",
+    "ref",
+    "unref",
+    "has_ref",
+    "send_buffer_size",
+    "recv_buffer_size",
+    "fileno",
+    "shutdown",
+    "listen",
+    "accept",
+    -- "read_start",
+    "read_stop",
+    -- "write",
+    "write2",
+    "try_write",
+    "is_readable",
+    "is_writable",
+    "set_blocking",
+    "open",
+    "bind",
+    "connect",
+    "getsockname",
+    "getpeername",
+    "pending_instances",
+    "pending_count",
+    "pending_type",
+    "nodelay",
+    "keepalive",
+    "simultaneous_accepts",
+    "getpeername",
+    "getsockname",
+    "write_queue_size",
+  }
+  for i = 1, #names do
+    local name = names[i]
+    local fn = socket[name]
+    if type(fn) == "function" then
+      ssocket[name] = function (_, ...)
+        return socket[name](socket, ...)
+      end
+    end
+  end
+
+
 
   return ssocket
 
